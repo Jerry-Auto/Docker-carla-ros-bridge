@@ -108,14 +108,25 @@ docker pull registry.cn-beijing.aliyuncs.com/synkrotron/carla:0.9.14
 此示例支持 GPU（需安装 NVIDIA Container Toolkit）、X11 GUI（需正确设置 DISPLAY 与 X 权限）：
 
 ```bash
-docker run --privileged \
-  --name carla_container \
+sudo docker run -dit \
   --gpus all \
+  -e NVIDIA_DRIVER_CAPABILITIES=all,utility,vulkan,graphics,compute \
+  -e VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json \
+  -e XAUTHORITY="$HOME/.Xauthority" \
+  -e DISPLAY="$DISPLAY" \
+  -e LANG=C.UTF-8 \
+  -e LC_ALL=C.UTF-8 \
+  --name carla914 \
   --net host \
-  -e DISPLAY=$DISPLAY \
-  -e SDL_VIDEODRIVER=x11 \
+  -v /dev:/dev \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -it registry.cn-beijing.aliyuncs.com/synkrotron/carla:0.9.14 /bin/bash
+  -v /usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json:ro \
+  -v "$HOME/.Xauthority":"$HOME/.Xauthority":ro \
+  -v /usr/share/fonts:/usr/share/fonts:ro \
+  -v "$HOME/.local/share/fonts":"$HOME/.local/share/fonts":ro \
+  carla914:GUI \
+  /bin/bash
+  
 ```
 
 说明与建议：

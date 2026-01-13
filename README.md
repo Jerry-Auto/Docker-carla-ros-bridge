@@ -4,18 +4,40 @@
 
 这里给出最简版本
 
+1.二进制版本
+
 ```bash
-docker pull registry.cn-beijing.aliyuncs.com/synkrotron/carla:0.9.14
+docker pull crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/carla_bin:914
 
-docker run --privileged \
-  --name carla914 \
+sudo docker run -dit \
   --gpus all \
+  -e NVIDIA_DRIVER_CAPABILITIES=all,utility,vulkan,graphics,compute \
+  -e VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json \
+  -e XAUTHORITY="$HOME/.Xauthority" \
+  -e DISPLAY="$DISPLAY" \
+  -e LANG=C.UTF-8 \
+  -e LC_ALL=C.UTF-8 \
+  --name carla914 \
   --net host \
-  -e DISPLAY=$DISPLAY \
-  -e SDL_VIDEODRIVER=x11 \
+  -v /dev:/dev \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -it registry.cn-beijing.aliyuncs.com/synkrotron/carla:0.9.14 /bin/bash
+  -v /usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json:ro \
+  -v "$HOME/.Xauthority":"$HOME/.Xauthority":ro \
+  -v /usr/share/fonts:/usr/share/fonts:ro \
+  -v "$HOME/.local/share/fonts":"$HOME/.local/share/fonts":ro \
+  crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/carla_bin:914 \
+  /bin/bash
+```
+进入容器后
+```bash
+fc-cache -fv
+su carla
+GUI
+```
 
+2.ROS2-bridge
+
+```bash
 docker pull crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/ros2-bridge:foxy
 
 sudo docker run -dit \
@@ -24,11 +46,43 @@ sudo docker run -dit \
   --name ros2_bridge \
   --net host \
   -v /dev:/dev \
-  -v /home/abc:/home/abc \
+  -v $HOME:$HOME \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   -e DISPLAY=$DISPLAY \
-  -w /home/abc \
+  -w $HOME \
   crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/ros2-bridge:foxy /bin/bash
 
 ```
-/home/abc改成自己的
+
+3.源码编译版本
+
+下载APP文件，可以联系我，有网盘资源(太大了,阿里云要收费)
+
+```bash
+docker pull crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/carla_dev_env:914
+
+sudo docker run -dit \
+  --gpus all \
+  -e NVIDIA_DRIVER_CAPABILITIES=all,utility,vulkan,graphics,compute \
+  -e VK_ICD_FILENAMES=/usr/share/vulkan/icd.d/nvidia_icd.json \
+  -e XAUTHORITY="$HOME/.Xauthority" \
+  -e DISPLAY="$DISPLAY" \
+  -e LANG=C.UTF-8 \
+  -e LC_ALL=C.UTF-8 \
+  --name carla \
+  --net host \
+  -v /dev:/dev \
+  -v "$HOME":"$HOME" \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  -v /usr/share/vulkan/icd.d/nvidia_icd.json:/usr/share/vulkan/icd.d/nvidia_icd.json:ro \
+  -v "$HOME/.Xauthority":"$HOME/.Xauthority":ro \
+  -v /usr/share/fonts:/usr/share/fonts:ro \
+  -v "$HOME/.local/share/fonts":"$HOME/.local/share/fonts":ro \
+  -w "$HOME" \
+  crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/carla_dev_env:914 \
+  /bin/bash
+
+fc-cache -fv
+ln -sfn /home/yourname/path/to/carla_env /carla
+
+```
