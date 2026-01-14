@@ -56,7 +56,9 @@ sudo docker run -dit \
 
 3.源码编译版本
 
-下载APP文件，可以联系我，有网盘资源(太大了,阿里云要收费)
+下载APP文件，网盘链接如下：
+
+https://www.123865.com/s/IR8MTd-UJev3
 
 ```bash
 docker pull crpi-d390lxwlwm12oflr.cn-shanghai.personal.cr.aliyuncs.com/carla_env/carla_dev_env:914
